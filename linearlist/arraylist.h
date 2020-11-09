@@ -7,7 +7,7 @@ class arraylist
 protected:
     T* element;            // 1D array to hold list elements
     int arraylength;       // capacity of the 1D array
-    int listsize;          // number of elements in list
+    int listSize;          // number of elements in list
 public:
     // constructor, copy constructor and destructor
     arraylist(int initialCapacity = 10);
@@ -21,9 +21,9 @@ public:
 
     bool empty() const { return listSize == 0; }
     int size() const { return listSize; }
-    int capacity() const { return arrayLength; }
+    int capacity() const { return arraylength; }
 
-    T& get(int theindex) const;
+    T& get(int theIndex) const;
     int indexOf(const T& theElement) const;
     void erase(int theIndex);
     void insert(int theIndex, const T& theElement);
@@ -34,7 +34,7 @@ template<class T>
 inline arraylist<T>::arraylist(int initialCapacity)
 {
     arraylength = initialCapacity;
-    listsize = 0;
+    listSize = 0;
     element = new T[arraylength];
 }
 
@@ -42,9 +42,9 @@ template<class T>
 inline arraylist<T>::arraylist(const arraylist<T>& thelist)
 {
     this->arraylength = thelist.arraylength;
-    this->listsize = thelist.listsize;
+    this->listSize = thelist.listSize;
     this->element = new T[arraylength];
-    for (int i = 0; i < listsize; i++)
+    for (int i = 0; i < listSize; i++)
     {
         this->element[i] = thelist.element[i];
     }
@@ -54,74 +54,62 @@ inline arraylist<T>::arraylist(const arraylist<T>& thelist)
 template<class T>
 inline T& arraylist<T>::get(int theIndex) const
 {
-    return element[theindex];
+    return element[theIndex];
 }
 
 template<class T>
 inline int arraylist<T>::indexOf(const T& theElement) const
 {
-    int index;
-    for (int i = 0; i < listsize; i++)
+    int i = 0;
+    for (; i < listSize; i++)
     {
         if (element[i] == theElement)
         {
-            index = i;
+            break;
         }
     }
-    return index;
+    return i;
 }
 
 template<class T>
 inline void arraylist<T>::erase(int theindex)
 {
-    T* temp = new T[arraylengh];
-    for (int i = 0; i < theindex; i++)
+    for (int i = theindex + 1; i < listSize; i++)
     {
-        temp[i] = element[i];
+        element[i - 1] = element[i];
     }
-    if (theindex == listsize - 1) {};
-    if (theindex < listsize - 1)
-    {
-        for (int i = theindex+1; i < listsize; i++)
-        {
-            temp[i] = element[i];
-        }
-    }
-    element = temp;
-    listsize = listsize - 1;
+    element[listSize - 1].~T();
+    listSize--;
 }
 
 template<class T>
 inline void arraylist<T>::insert(int theIndex, const T& theElement)
 {
-    T* temp = new T[arraylengh+1];
-    for (int i=0; i < theindex; i++)
+    if (listSize == arraylength)
     {
-        temp[i] = element[i];
-    }
-    if (theindex == listsize - 1)
-    {
-        temp[index] = theElement;
-    }
-    if (theindex < listsize-1)
-    {
-        temp[index] = theElement;
-        for (int i = theindex + 1; i < listsize; i++)
+        arraylength = arraylength * 2;
+        T* temp = new T[arraylength];
+        for (int i = 0; i < listSize; i++)
         {
             temp[i] = element[i];
         }
+        delete[]element;
+        element = temp;
     }
-    element = temp;
-    listsize = listsize + 1;
+    for (int i = listSize - 1; i >= theIndex; i--)
+    {
+        element[i + 1] = element[i];
+    }
+    element[theIndex] = theElement;
+    listSize++;
 }
 
 template<class T>
 inline void arraylist<T>::output() const
 {
-    for (int i = 0; i < listsize; i++)
+    for (int i = 0; i < listSize; i++)
     {
-        cout << element[i] << " ";
+        cout << element[i] << "  ";
     }
     cout << endl;
 }
-
