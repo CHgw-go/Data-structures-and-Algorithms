@@ -22,7 +22,7 @@ template<class T>
 class chain
 {
 protected:
-    node<T>* firstNode;  
+    node<T>* firstNode;
     int listSize;
 public:
     chain();
@@ -113,7 +113,7 @@ template<class T>
 inline void chain<T>::erase(int theIndex)
 {
     node<T>* p = firstNode;
-    node<T>* deleteNode=nullptr;
+    node<T>* deleteNode = nullptr;
     if (theIndex == 0)
     {
         deleteNode = firstNode;
