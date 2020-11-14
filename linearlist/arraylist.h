@@ -5,20 +5,15 @@ template<class T>
 class arraylist
 {
 protected:
-    T* element;            // 1D array to hold list elements
-    int arraylength;       // capacity of the 1D array
-    int listSize;          // number of elements in list
+    T* element;
+    int arraylength;
+    int listSize;
 public:
-    // constructor, copy constructor and destructor
     arraylist(int initialCapacity = 10);
     arraylist(const arraylist<T>&);
     ~arraylist() { delete[] element; }
 
-    // output
     void output() const;
-
-    // ADT methods
-
     bool empty() const { return listSize == 0; }
     int size() const { return listSize; }
     int capacity() const { return arraylength; }
@@ -28,6 +23,53 @@ public:
     void erase(int theIndex);
     void insert(int theIndex, const T& theElement);
 
+    class iterator;
+    iterator begin() { return iterator(element); }
+    iterator end() { return iterator(element + listSize); }
+
+    class iterator
+    {
+    public:
+        iterator(T* thePosition = 0) { position = thePosition; }
+
+        T& operator*() const { return *position; }
+        T* operator->() const { return &position; }
+
+        iterator& operator++()
+        {
+            ++position;
+            return *this;
+        }
+        iterator operator++(int)
+        {
+            iterator old = *this;
+            ++position;
+            return old;
+        }
+
+        iterator& operator--()
+        {
+            --position;
+            return *this;
+        }
+        iterator operator--(int)
+        {
+            iterator old = *this;
+            --position;
+            return old;
+        }
+
+        bool operator!=(const iterator right) const
+        {
+            return position != right.position;
+        }
+        bool operator==(const iterator right) const
+        {
+            return position == right.position;
+        }
+    protected:
+        T* position;
+    };
 };
 
 template<class T>

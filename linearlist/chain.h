@@ -1,17 +1,19 @@
 #pragma once
+#include<vector>
+
 template <class T>
-class node
+class chainNode
 {
 public:
     T element;
-    node<T>* next;
+    chainNode<T>* next;
 
-    node() {}
-    node(const T& element)
+    chainNode() {}
+    chainNode(const T& element)
     {
         this->element = element;
     }
-    node(const T& element, node<T>* next)
+    chainNode(const T& element, chainNode<T>* next)
     {
         this->element = element;
         this->next = next;
@@ -22,7 +24,7 @@ template<class T>
 class chain
 {
 protected:
-    node<T>* firstNode;
+    chainNode<T>* firstNode;
     int listSize;
 public:
     chain();
@@ -34,45 +36,91 @@ public:
     T& get(int theIndex) const;
     int indexOf(const T& theElement) const;
     void erase(int theIndex);
+    void erase(T& theElement);
     void insert(int theIndex, const T& theElement);
     void output() const;
 
+    chainNode<T>* begin() { return firstNode; }
+    chainNode<T>* end()
+    {
+        chainNode<T>* p = firstNode;
+        while (p != NULL)
+        {
+            p = p->next;
+        }
+        return p;
+    }
+    class iterator
+    {
+    protected:
+        chainNode<T>* node;
+    public:
+        iterator(chainNode<T>* theNode = NULL)
+        {
+            node = theNode;
+        }
+
+        T& operator*() const { return node->element; }
+        T* operator->() const { return &node->element; }
+
+        iterator& operator++()
+        {
+            node = node->next;
+            return *this;
+        }
+        iterator operator++(int)
+        {
+            iterator old = *this;
+            node = node->next;
+            return old;
+        }
+
+        bool operator!=(const iterator right) const
+        {
+            return node != right.node;
+        }
+        bool operator==(const iterator right) const
+        {
+            return node == right.node;
+        }
+    };
 };
 
 template<class T>
 inline chain<T>::chain()
 {
-    firstNode = nullptr;
+    firstNode = NULL;
     listSize = 0;
 }
 
 template<class T>
 inline chain<T>::chain(const chain<T>& theChain)
 {
-    listSize = theChain.size;
+    listSize = theChain.listSize;
     if (listSize == 0)
     {
-        firstNode = nullptr;
+        firstNode = NULL;
         return;
     }
-    firstNode = new node<T>(theChain.firstNode->element);
-    node<T>* p = firstNode;
-    node<T>* tp = theChain.firstNode;
-    while (tp != nullptr)
+    firstNode = new chainNode<T>(theChain.firstNode->element);
+    chainNode<T>* p = firstNode;
+    chainNode<T>* tp = theChain.firstNode;
+    tp = tp->next;
+    while (tp != NULL)
     {
-        p->next = new node<T>(tp->element);
+        p->next = new chainNode<T>(tp->element);
         p = p->next;
         tp = tp->next;
     }
-    p->next = nullptr;
+    p->next = NULL;
 }
 
 template<class T>
 inline chain<T>::~chain()
 {
-    while (firstNode != nullptr)
+    while (firstNode != NULL)
     {
-        node<T>* nextNode = firstNode->next;
+        chainNode<T>* nextNode = firstNode->next;
         delete firstNode;
         firstNode = nextNode;
     }
@@ -81,7 +129,7 @@ inline chain<T>::~chain()
 template<class T>
 inline T& chain<T>::get(int theIndex) const
 {
-    node<T>* p = firstNode;
+    chainNode<T>* p = firstNode;
     for (int i = 0; i < theIndex; i++)
     {
         p = p->next;
@@ -92,14 +140,14 @@ inline T& chain<T>::get(int theIndex) const
 template<class T>
 inline int chain<T>::indexOf(const T& theElement) const
 {
-    node<T>* p = firstNode;
+    chainNode<T>* p = firstNode;
     int i = 0;
-    while (p != nullptr && p->element != theElement)
+    while (p != NULL && p->element != theElement)
     {
         p = p->next;
         ++i;
     }
-    if (p->next == nullptr)
+    if (p == NULL)
     {
         return -1;
     }
@@ -112,8 +160,8 @@ inline int chain<T>::indexOf(const T& theElement) const
 template<class T>
 inline void chain<T>::erase(int theIndex)
 {
-    node<T>* p = firstNode;
-    node<T>* deleteNode = nullptr;
+    chainNode<T>* p = firstNode;
+    chainNode<T>* deleteNode = NULL;
     if (theIndex == 0)
     {
         deleteNode = firstNode;
@@ -129,6 +177,30 @@ inline void chain<T>::erase(int theIndex)
         p->next = deleteNode->next;
     }
     delete deleteNode;
+    listSize--;
+}
+
+template<class T>
+inline void chain<T>::erase(T& theElement)
+{
+    chainNode<T>* p = firstNode;
+    chainNode<T>* deleteNode = NULL;
+    if (p->element == theElement)
+    {
+        p = p->next;
+        delete firstNode;
+        listSize--;
+        firstNode = p;
+        return;
+    }
+    while (p->next->element != theElement)
+    {
+        p = p->next;
+    }
+    deleteNode = p->next;
+    p->next = deleteNode->next;
+    delete deleteNode;
+    listSize--;
 }
 
 template<class T>
@@ -136,21 +208,25 @@ inline void chain<T>::insert(int theIndex, const T& theElement)
 {
     if (theIndex == 0)
     {
-        firstNode = new node<T>(theElement, firstNode);
+        firstNode = new chainNode<T>(theElement, firstNode);
     }
-    node<T>* p = firstNode;
-    for (int i = 0; i < theIndex; i++)
+    else
     {
-        p = p->next;
+        chainNode<T>* p = firstNode;
+        for (int i = 0; i < theIndex - 1; i++)
+        {
+            p = p->next;
+        }
+        p->next = new chainNode<T>(theElement, p->next);
     }
-    p->next = new node<T>(theElement, p->next);
+    listSize++;
 }
 
 template<class T>
 void chain<T>::output() const
 {
-    node<T>* p = firstNode;
-    for (node<T>* p = firstNode; p != nullptr; p = p->next)
+    chainNode<T>* p = firstNode;
+    for (; p != NULL; p = p->next)
     {
         std::cout << p->element << "  ";
     }
