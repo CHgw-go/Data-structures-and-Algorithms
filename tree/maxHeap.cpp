@@ -1,4 +1,4 @@
-﻿// test max heap
+// test max heap
 
 #include <iostream>
 #include "maxHeap.h"
