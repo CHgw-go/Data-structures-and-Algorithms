@@ -41,7 +41,7 @@ protected:
 		++count;
 	}
 	static int count;
-	static void putout(node* theNode)
+	static void output(node* theNode)
 	{
 		std::cout << theNode->element << "  ";
 	}
@@ -76,21 +76,21 @@ public:
 		preOrder(node* theNode);
 	}
 
-	void putout_pre()
+	void output_pre()
 	{
-		visit = &putout;
+		visit = &output;
 		preOrder(root);
 		std::cout << std::endl;
 	}
-	void putout_in()
+	void output_in()
 	{
-		visit = &putout;
+		visit = &output;
 		inOrder(root);
 		std::cout << std::endl;
 	}
-	void putout_post()
+	void output_post()
 	{
-		visit = putout;
+		visit = output;
 		postOrder(root);
 		std::cout << std::endl;
 	}

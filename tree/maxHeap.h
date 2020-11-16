@@ -67,7 +67,7 @@ inline void maxHeap<T>::pop()
         
         heap[p] = heap[child];
         p = child;
-        child = child * 2;
+        child = p * 2;
     }
     heap[p] = lastElement;
 }
@@ -109,7 +109,7 @@ inline void maxHeap<T>::initialize(T*theHeap, int theSize)
                 break;
             heap[p] = heap[child];
             p = child;
-            child = child * 2;
+            child = p * 2;
         }
         heap[p] = element;
     }
